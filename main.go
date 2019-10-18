@@ -30,6 +30,9 @@ func mainAction(c *cli.Context) error {
 		return err
 	}
 	license := askToSelectLicense(licenses)
+	if license == nil {
+		return nil
+	}
 
 	detail, err := getLicenseDetail(license)
 	if err != nil {
@@ -46,12 +49,17 @@ func askToSelectLicense(licenses []License) *License {
 		fmt.Printf("[%d]\t%s\n", i, license.Name)
 	}
 	fmt.Println()
-	fmt.Print("Select a License: ")
 
 	licensesLen := len(licenses)-1
 	for {
+		fmt.Print("Select a License (empty is cancel): ")
+
 		var numStr string
-		fmt.Scan(&numStr)
+		fmt.Scanln(&numStr)
+
+		if numStr == "" {
+			return nil
+		}
 
 		num, err := strconv.Atoi(numStr)
 		if err != nil {
